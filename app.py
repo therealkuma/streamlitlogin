@@ -9,7 +9,7 @@ import plotly.express as px
 import xlrd
 import openpyxl
 import plotly.graph_objects as go
-
+import database as db
 import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
@@ -33,16 +33,34 @@ if authentication_status:
     if username == 'guest':
         try:
             if authenticator.register_user('Register user', preauthorization=False):
-                    st.write('Please logout and log back in')
-                    
+                st.success('Please logout and log back in')
+                
+                
         except Exception as e:
             st.error(e)
-        with open('config.yaml', 'w') as file:
-                        yaml.dump(config, file, default_flow_style=False)
+        #Store user information in Deta
+        user_data = {"key": new_username, "name": new_name, "email":new_email, "password": new_password}
+        db.db.put(user_data)
+        
         authenticator.logout('Logout', 'main', key='unique_key')
         
     else:        
         authenticator.logout('Logout', 'main', key='unique_key')
+
+# if authentication_status:
+#     if username == 'guest':
+#         try:
+#             if authenticator.register_user('Register user', preauthorization=False):
+#                     st.write('Please logout and log back in')
+                    
+#         except Exception as e:
+#             st.error(e)
+#         with open('config.yaml', 'w') as file:
+#                         yaml.dump(config, file, default_flow_style=False)
+#         authenticator.logout('Logout', 'main', key='unique_key')
+        
+#     else:        
+#         authenticator.logout('Logout', 'main', key='unique_key')
     
         st.write(f'Welcome *{name}*')
         st.title("Expense Categorization App")
@@ -118,40 +136,7 @@ if authentication_status:
             # File upload
             with st.sidebar:
                 st.write("## Upload 2 files to get started")
-                expenses_file = st.file_uploader("Upload Expenses CSV file", type=["csv"])
-                category_file = st.file_uploader("Upload Category Mapping CSV file", type=["csv"])
-
-                # Add content to the bar
-                st.write("How to use this app")
-                
-                # Display the YouTube video
-                st.components.v1.html(youtube_embed_code, height=330)
-
-            if expenses_file is not None and category_file is not None:
-                # Create temporary files
-                temp_expenses = tempfile.NamedTemporaryFile(delete=False)
-                temp_category_mapping = tempfile.NamedTemporaryFile(delete=False)
-
-                # Save uploaded files to temporary files
-                temp_expenses.write(expenses_file.read())
-                temp_category_mapping.write(category_file.read())
-
-                # Close and flush the temporary files
-                temp_expenses.close()
-                temp_category_mapping.close()
-
-                expenses_df = pd.read_csv(temp_expenses.name)
-                expenses_df['Date'] = pd.to_datetime(expenses_df['Date'], infer_datetime_format=True, errors='coerce')
-
-
-                category_mapping_df = pd.read_csv(temp_category_mapping.name)
-
-                # Show uploaded files
-                st.subheader("Uploaded Expenses CSV:")
-                st.write(expenses_df)
-
-                st.subheader("Uploaded Category Mapping CSV:")
-                st.write(category_mapping_df)
+               
 elif authentication_status is False:
     st.error('Username/password is incorrect')
 elif authentication_status is None:
