@@ -34,7 +34,7 @@ if authentication_status:
         try:
             if authenticator.register_user('Register user', preauthorization=False):
                 st.success('Please logout and log back in')
-                st.write(stauth.credentials)
+                st.write(self.credentials[0][0])
                 #Store user information in Deta
                 # user_data = {"key": username, "name": name}
                 # jb.db.put(user_data)
