@@ -36,7 +36,7 @@ if authentication_status:
                 st.success('Please logout and log back in')
                 
                 # access the last username of credentials
-                st.write(list(authenticator.credentials['usernames'].keys()))
+                st.write(list(authenticator.credentials['usernames'].keys())[-1])
                 #Store user information in Deta
                 # user_data = {"key": username, "name": name}
                 # jb.db.put(user_data)
