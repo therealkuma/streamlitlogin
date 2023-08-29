@@ -1,163 +1,158 @@
-import pandas as pd  # pip install pandas openpyxl
-import plotly.express as px  # pip install plotly-express
-import streamlit as st  # pip install streamlit
-import streamlit_authenticator as stauth  # pip install streamlit-authenticator
+import csv
+import pandas as pd
+import streamlit as st
+import tempfile
+import base64
+from io import BytesIO
+import os
+import plotly.express as px
+import xlrd
+import openpyxl
+import plotly.graph_objects as go
 
-import database as db
+import streamlit as st
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
+
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
 
 
-# emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
-st.set_page_config(page_title="Sales Dashboard", page_icon=":bar_chart:")
-
-
-# --- USER AUTHENTICATION ---
-users = db.fetch_all_users()
-
-usernames = [user["key"] for user in users]
-names = [user["name"] for user in users]
-hashed_passwords = [user["password"] for user in users]
-
-authenticator = stauth.Authenticate(names, usernames, hashed_passwords,
-    "sales_dashboard", "abcdef", cookie_expiry_days=30)
-
-name, authentication_status, username = authenticator.login("Login", "main")
-
-if authentication_status == False:
-    st.error("Username/password is incorrect")
-
-if authentication_status == None:
-    st.warning("Please enter your username and password")
+name, authentication_status, username = authenticator.login('Login', 'main')
 
 if authentication_status:
-#     if username == 'pparker':
-#         try:
-#             if authenticator.register_user('Register user', preauthorization=False):
-#                 st.success('Please logout and log back in')
-#                 # Store user information in Deta
-#                 user_data = {"key": new_username, "name": new_name, "email":new_email, "password": new_password}
-#                 db.db.put(user_data)
+    if username == 'guest':
+        try:
+            if authenticator.register_user('Register user', preauthorization=False):
+                    st.write('Please logout and log back in')
+                    
+        except Exception as e:
+            st.error(e)
+        with open('config.yaml', 'w') as file:
+                        yaml.dump(config, file, default_flow_style=False)
+        authenticator.logout('Logout', 'main', key='unique_key')
+        
+    else:        
+        authenticator.logout('Logout', 'main', key='unique_key')
+    
+        st.write(f'Welcome *{name}*')
+        st.title("Expense Categorization App")
+        st.write(f'Your expense.csv should have column names Date, Description, Debit and Credit. "Amount" Column can be used if Debit and Credit columns are not available')
+        st.image("expense_example.png", use_column_width=True)
+        
+        st.write(f'Your category.csv should have the following column names: Keyword and Category. In addition, Keyword-Category pair has to be unique among the list, if duplicated pair/s are identified from the list, this program will run into error')
+        st.image("category_example.png", use_column_width=True)
+        
+        
+        def load_category_mapping(file_path):
+            category_mapping = {}
+            with open(file_path, 'r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip header row
+                for row in reader:
+                    keyword = row[0].strip().lower()
+                    category = row[1].strip()
+                    category_mapping[keyword] = category
+            return category_mapping
+
+
+        def categorize_expenses(expenses_file, category_mapping_file):
+            category_mapping = load_category_mapping(category_mapping_file)
+            categorized_expenses = []
+
+            df = pd.read_csv(expenses_file)
+            df.fillna(0, inplace=True)  # Replace NaN values with zero
+
+            header = df.columns.tolist()
+            if 'Amount' not in header:
+                header.append('Amount')
+                has_amount = False
+            else:
+                has_amount = True
+
+            header.append("Category")
+            categorized_expenses.append(header)
+
+            for index, row in df.iterrows():
+                description = row['Description'].strip().lower()
+
+                if not has_amount:
+                    debit = pd.to_numeric(row['Debit'], errors='coerce')
+                    credit = pd.to_numeric(row['Credit'], errors='coerce')
+                    amount = debit + credit
+                    row['Amount'] = amount
+
+                category_found = False
+                for keyword, category in category_mapping.items():
+                    if keyword in description:
+                        row['Category'] = category
+                        categorized_expenses.append(row.tolist())
+                        category_found = True
+                        break
+                if not category_found:
+                    row['Category'] = "Uncategorized"
+                    categorized_expenses.append(row.tolist())
+
+            return categorized_expenses
+
+
+        def main():
+            
+            # YouTube video ID (the string of characters after "v=" in the YouTube URL)
+            video_id = "a7yLgMALYtw"
+            
+            # YouTube embed code
+            youtube_embed_code = f"""
+            <iframe width="330" height="200" src="https://www.youtube.com/embed/{video_id}" frameborder="0" allowfullscreen></iframe>
+            """
+
+            # File upload
+            with st.sidebar:
+                st.write("## Upload 2 files to get started")
+                expenses_file = st.file_uploader("Upload Expenses CSV file", type=["csv"])
+                category_file = st.file_uploader("Upload Category Mapping CSV file", type=["csv"])
+
+                # Add content to the bar
+                st.write("How to use this app")
                 
-#         except Exception as e:
-#             st.error(e)
-        
-#         # authenticator.logout('Logout', 'main', key='unique_key')
-        
-#     # else:        
-#     #     authenticator.logout('Logout', 'main', key='unique_key')
-        
-#     else:
-    # ---- READ EXCEL ----
-    @st.cache
-    def get_data_from_excel():
-        df = pd.read_excel(
-            io="supermarkt_sales.xlsx",
-            engine="openpyxl",
-            sheet_name="Sales",
-            skiprows=3,
-            usecols="B:R",
-            nrows=1000,
-        )
-        # Add 'hour' column to dataframe
-        df["hour"] = pd.to_datetime(df["Time"], format="%H:%M:%S").dt.hour
-        return df
+                # Display the YouTube video
+                st.components.v1.html(youtube_embed_code, height=330)
 
-    df = get_data_from_excel()
+            if expenses_file is not None and category_file is not None:
+                # Create temporary files
+                temp_expenses = tempfile.NamedTemporaryFile(delete=False)
+                temp_category_mapping = tempfile.NamedTemporaryFile(delete=False)
 
-    # ---- SIDEBAR ----
-    authenticator.logout("Logout", "sidebar")
-    st.sidebar.title(f"Welcome {name}")
-    st.sidebar.header("Please Filter Here:")
-    city = st.sidebar.multiselect(
-        "Select the City:",
-        options=df["City"].unique(),
-        default=df["City"].unique()
-    )
+                # Save uploaded files to temporary files
+                temp_expenses.write(expenses_file.read())
+                temp_category_mapping.write(category_file.read())
 
-    customer_type = st.sidebar.multiselect(
-        "Select the Customer Type:",
-        options=df["Customer_type"].unique(),
-        default=df["Customer_type"].unique(),
-    )
+                # Close and flush the temporary files
+                temp_expenses.close()
+                temp_category_mapping.close()
 
-    gender = st.sidebar.multiselect(
-        "Select the Gender:",
-        options=df["Gender"].unique(),
-        default=df["Gender"].unique()
-    )
-
-    df_selection = df.query(
-        "City == @city & Customer_type ==@customer_type & Gender == @gender"
-    )
-
-    # ---- MAINPAGE ----
-    st.title(":bar_chart: Sales Dashboard")
-    st.markdown("##")
-
-    # TOP KPI's
-    total_sales = int(df_selection["Total"].sum())
-    average_rating = round(df_selection["Rating"].mean(), 1)
-    star_rating = ":star:" * int(round(average_rating, 0))
-    average_sale_by_transaction = round(df_selection["Total"].mean(), 2)
-
-    left_column, middle_column, right_column = st.columns(3)
-    with left_column:
-        st.subheader("Total Sales:")
-        st.subheader(f"US $ {total_sales:,}")
-    with middle_column:
-        st.subheader("Average Rating:")
-        st.subheader(f"{average_rating} {star_rating}")
-    with right_column:
-        st.subheader("Average Sales Per Transaction:")
-        st.subheader(f"US $ {average_sale_by_transaction}")
-
-    st.markdown("""---""")
-
-    # SALES BY PRODUCT LINE [BAR CHART]
-    sales_by_product_line = (
-        df_selection.groupby(by=["Product line"]).sum()[["Total"]].sort_values(by="Total")
-    )
-    fig_product_sales = px.bar(
-        sales_by_product_line,
-        x="Total",
-        y=sales_by_product_line.index,
-        orientation="h",
-        title="<b>Sales by Product Line</b>",
-        color_discrete_sequence=["#0083B8"] * len(sales_by_product_line),
-        template="plotly_white",
-    )
-    fig_product_sales.update_layout(
-        plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=(dict(showgrid=False))
-    )
-
-    # SALES BY HOUR [BAR CHART]
-    sales_by_hour = df_selection.groupby(by=["hour"]).sum()[["Total"]]
-    fig_hourly_sales = px.bar(
-        sales_by_hour,
-        x=sales_by_hour.index,
-        y="Total",
-        title="<b>Sales by hour</b>",
-        color_discrete_sequence=["#0083B8"] * len(sales_by_hour),
-        template="plotly_white",
-    )
-    fig_hourly_sales.update_layout(
-        xaxis=dict(tickmode="linear"),
-        plot_bgcolor="rgba(0,0,0,0)",
-        yaxis=(dict(showgrid=False)),
-    )
+                expenses_df = pd.read_csv(temp_expenses.name)
+                expenses_df['Date'] = pd.to_datetime(expenses_df['Date'], infer_datetime_format=True, errors='coerce')
 
 
-    left_column, right_column = st.columns(2)
-    left_column.plotly_chart(fig_hourly_sales, use_container_width=True)
-    right_column.plotly_chart(fig_product_sales, use_container_width=True)
+                category_mapping_df = pd.read_csv(temp_category_mapping.name)
 
+                # Show uploaded files
+                st.subheader("Uploaded Expenses CSV:")
+                st.write(expenses_df)
 
-    # ---- HIDE STREAMLIT STYLE ----
-    hide_st_style = """
-                <style>
-                #MainMenu {visibility: hidden;}
-                footer {visibility: hidden;}
-                header {visibility: hidden;}
-                </style>
-                """
-    st.markdown(hide_st_style, unsafe_allow_html=True)
+                st.subheader("Uploaded Category Mapping CSV:")
+                st.write(category_mapping_df)
+elif authentication_status is False:
+    st.error('Username/password is incorrect')
+elif authentication_status is None:
+    st.warning('Please enter your username and password  \nIf you do not have one, login as guest, passcode is 5566')
