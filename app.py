@@ -36,6 +36,7 @@ if authentication_status:
                 st.success('Please logout and log back in')
                 
                 # access the last username of credentials
+                st.write(list(authenticator.credentials['usernames'].keys())[-1])
                 last_entry=list(authenticator.credentials['usernames'].values())[-1]
                 st.write(last_entry)
                 #new_name= list(authenticator.credentials['names'].keys())[-1]
