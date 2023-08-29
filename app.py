@@ -35,14 +35,17 @@ if authentication_status:
             if authenticator.register_user('Register user', preauthorization=False):
                 st.success('Please logout and log back in')
                 
-                # access the last username of credentials
-                st.write(list(authenticator.credentials['usernames'].keys())[-1])
+                # access the last username and value of that username's  credentials
+                new_username=list(authenticator.credentials['usernames'].keys())[-1])
                 last_entry=list(authenticator.credentials['usernames'].values())[-1]
                 st.write(last_entry)
-                #new_name= list(authenticator.credentials['names'].keys())[-1]
+                
                 #Store user information in Deta
-                #user_data = {"key": new_username, "name": new_name}
-                #jb.db.put(user_data)
+                new_name = last_entry['name']
+                new_password = last_entry['password']
+                new_email = last_entry['email']
+                user_data = {"key": new_username, "name": new_name, "email": new_email, "password": new_password}
+                jb.db.put(user_data)
         except Exception as e:
             st.error(e)
         
