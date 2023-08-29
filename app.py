@@ -36,7 +36,7 @@ if authentication_status:
                 st.success('Please logout and log back in')
                 
                 # access the last username of credentials
-                st.write(list(authenticator.credentials['usernames'].keys())[-1])
+                st.write(authenticator.credentials)
                 #new_name= list(authenticator.credentials['names'].keys())[-1]
                 #Store user information in Deta
                 #user_data = {"key": new_username, "name": new_name}
