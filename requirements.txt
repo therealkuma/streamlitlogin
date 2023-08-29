@@ -13,3 +13,4 @@ plotly.express==0.4.1
 xlrd<2.0
 openpyxl <=3.0.9
 deta==1.1.0
+python-dotenv==0.21.0
