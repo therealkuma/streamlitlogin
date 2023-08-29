@@ -36,7 +36,7 @@ if authentication_status:
                 st.success('Please logout and log back in')
                 
                 #Store user information in Deta
-                user_data = {"key": username, "name": name, "password": hashed_password}
+                user_data = {"key": username, "name": name, "password": new_password}
                 jb.db.put(user_data)
         except Exception as e:
             st.error(e)
