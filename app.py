@@ -9,7 +9,7 @@ import plotly.express as px
 import xlrd
 import openpyxl
 import plotly.graph_objects as go
-import database as db
+import database as jb
 import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
@@ -35,12 +35,13 @@ if authentication_status:
             if authenticator.register_user('Register user', preauthorization=False):
                 st.success('Please logout and log back in')
                 
-                
+                #Store user information in Deta
+                user_data = {"key": new_username, "name": new_name, "email":new_email, "password": new_password}
+                jb.db.put(user_data)
         except Exception as e:
             st.error(e)
-        #Store user information in Deta
-        user_data = {"key": new_username, "name": new_name, "email":new_email, "password": new_password}
-        db.db.put(user_data)
+        
+        
         
         authenticator.logout('Logout', 'main', key='unique_key')
         
@@ -69,59 +70,7 @@ if authentication_status:
         
         st.write(f'Your category.csv should have the following column names: Keyword and Category. In addition, Keyword-Category pair has to be unique among the list, if duplicated pair/s are identified from the list, this program will run into error')
         st.image("category_example.png", use_column_width=True)
-        
-        
-        def load_category_mapping(file_path):
-            category_mapping = {}
-            with open(file_path, 'r') as file:
-                reader = csv.reader(file)
-                next(reader)  # Skip header row
-                for row in reader:
-                    keyword = row[0].strip().lower()
-                    category = row[1].strip()
-                    category_mapping[keyword] = category
-            return category_mapping
-
-
-        def categorize_expenses(expenses_file, category_mapping_file):
-            category_mapping = load_category_mapping(category_mapping_file)
-            categorized_expenses = []
-
-            df = pd.read_csv(expenses_file)
-            df.fillna(0, inplace=True)  # Replace NaN values with zero
-
-            header = df.columns.tolist()
-            if 'Amount' not in header:
-                header.append('Amount')
-                has_amount = False
-            else:
-                has_amount = True
-
-            header.append("Category")
-            categorized_expenses.append(header)
-
-            for index, row in df.iterrows():
-                description = row['Description'].strip().lower()
-
-                if not has_amount:
-                    debit = pd.to_numeric(row['Debit'], errors='coerce')
-                    credit = pd.to_numeric(row['Credit'], errors='coerce')
-                    amount = debit + credit
-                    row['Amount'] = amount
-
-                category_found = False
-                for keyword, category in category_mapping.items():
-                    if keyword in description:
-                        row['Category'] = category
-                        categorized_expenses.append(row.tolist())
-                        category_found = True
-                        break
-                if not category_found:
-                    row['Category'] = "Uncategorized"
-                    categorized_expenses.append(row.tolist())
-
-            return categorized_expenses
-
+       
 
         def main():
             
