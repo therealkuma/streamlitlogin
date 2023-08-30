@@ -73,9 +73,9 @@ credentials = {'usernames': credentials_dict}
 authenticator = stauth.Authenticate(credentials,
      "sales_dashboard", "abcdef", cookie_expiry_days=30)
 
-
+st.header("Expense Categorization App")
 name, authentication_status, username = authenticator.login('Login', 'main')
-st.title("Expense Categorization App")
+
 if authentication_status:
     if username == 'guest':
         try:
