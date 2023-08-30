@@ -49,7 +49,19 @@ users = fetch_users_with_retry()
 
 
 # Use the st.cache decorator to cache the result of jb.fetch_all_users()
-# @st.cache
+@st.cache
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url('background.png');
+        background-size: cover;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # def fetch_users():
 #     return jb.fetch_all_users()
 
