@@ -16,22 +16,6 @@ import yaml
 from yaml.loader import SafeLoader
 import time
 
-def set_background_image():
-    # Set the raw GitHub file URL here
-    github_raw_image_url = 'https://github.com/therealkuma/streamlitlogin/blob/main/background.png'
-
-    # Apply CSS styling to set the background image
-    st.markdown(
-        f"""
-        <style>
-        body {{
-            background-image: url('{github_raw_image_url}');
-            background-size: cover;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
 # with open('config.yaml') as file:
 #     config = yaml.load(file, Loader=SafeLoader)
@@ -175,7 +159,22 @@ if authentication_status:
 
             return categorized_expenses
 
+def set_background_image():
+    # Set the raw GitHub file URL here
+    github_raw_image_url = 'https://github.com/therealkuma/streamlitlogin/blob/main/background.png'
 
+    # Apply CSS styling to set the background image
+    st.markdown(
+        f"""
+        <style>
+        body {{
+            background-image: url('{github_raw_image_url}');
+            background-size: cover;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
         def main():
             set_background_image()
             # YouTube video ID (the string of characters after "v=" in the YouTube URL)
