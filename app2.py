@@ -77,7 +77,7 @@ if authentication_status:
     if username == 'guest':
         try:
             if authenticator.register_user('Register user', preauthorization=False):
-                st.success('Please logout and log back in')
+                st.success('Account created, please logout and log back in')
                 
                 # access the last username and value of that username's  credentials
                 new_username=list(authenticator.credentials['usernames'].keys())[-1]
