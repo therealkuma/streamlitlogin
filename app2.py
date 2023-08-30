@@ -27,7 +27,15 @@ from yaml.loader import SafeLoader
 # )
 # --- USER AUTHENTICATION ---
 
-users = jb.fetch_all_users()
+#users = jb.fetch_all_users()
+
+# Use the st.cache decorator to cache the result of jb.fetch_all_users()
+@st.cache
+def fetch_users():
+    return jb.fetch_all_users()
+
+# Call the cached function to fetch users
+users = fetch_users()
 
 usernames = [user["key"] for user in users]
 names = [user["name"] for user in users]
