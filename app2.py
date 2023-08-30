@@ -76,18 +76,23 @@ authenticator = stauth.Authenticate(credentials,
 
 name, authentication_status, username = authenticator.login('Login', 'main')
 
-# Add custom CSS for background image
+# Add an HTML component for styling
 st.markdown(
     """
     <style>
-    .stApp {
+    .custom-background {
         background-image: url('background.png');
         background-size: cover;
+        background-repeat: no-repeat;
+        min-height: 100vh; /* Ensure the background covers the entire viewport */
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
+# Apply the custom background to the main container
+st.markdown('<div class="custom-background">', unsafe_allow_html=True)
 
 # Add content to your Streamlit app
 st.title("Expense Categorization App")
