@@ -99,7 +99,8 @@ if authentication_status:
         authenticator.logout('Logout', 'main', key='unique_key')
         
     else:        
-        st.sidebar(authenticator.logout('Logout', 'main', key='unique_key'))
+        with st.sidebar:
+            authenticator.logout('Logout', 'main', key='unique_key')
     
         st.write(f'Welcome *{name}*')
         
