@@ -33,11 +33,13 @@ usernames = [user["key"] for user in users]
 names = [user["name"] for user in users]
 hashed_passwords = [user["password"] for user in users]
 
-# Create a JSON format dictionary from the arrays
-credentials = {
+# Create a JSON format dictionary from the arrays, and then add a top level key call "usernames"
+credentials_dict = {
     username: {"name": name, "password": password}
     for username, name, password in zip(usernames, names, hashed_passwords)
 }
+
+credentials = {'usernames': credentials_dict}
 
 authenticator = stauth.Authenticate(credentials,
      "sales_dashboard", "abcdef", cookie_expiry_days=30)
