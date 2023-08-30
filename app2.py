@@ -25,7 +25,7 @@ def set_background_image():
         f"""
         <style>
         body {{
-            background-image: url('{background_image}');
+            background-image: '{background_image}';
             background-size: cover;
         }}
         </style>
