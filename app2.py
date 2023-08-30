@@ -17,15 +17,15 @@ from yaml.loader import SafeLoader
 import time
 
 def set_background_image():
-    # Set your background image URL here
-    background_image = 'background.png'
+    # Set the raw GitHub file URL here
+    github_raw_image_url = 'https://github.com/therealkuma/streamlitlogin/blob/main/background.png'
 
     # Apply CSS styling to set the background image
     st.markdown(
         f"""
         <style>
         body {{
-            background-image: '{background_image}';
+            background-image: url('{github_raw_image_url}');
             background-size: cover;
         }}
         </style>
