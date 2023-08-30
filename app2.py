@@ -59,8 +59,7 @@ st.markdown(
     }
     </style>
     """,
-    unsafe_allow_html=True
-)
+    unsafe_allow_html=True)
 
 # def fetch_users():
 #     return jb.fetch_all_users()
