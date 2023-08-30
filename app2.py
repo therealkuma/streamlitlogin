@@ -75,7 +75,7 @@ authenticator = stauth.Authenticate(credentials,
 
 
 name, authentication_status, username = authenticator.login('Login', 'main')
-
+st.title("Expense Categorization App")
 if authentication_status:
     if username == 'guest':
         try:
@@ -102,7 +102,7 @@ if authentication_status:
         authenticator.logout('Logout', 'main', key='unique_key')
     
         st.write(f'Welcome *{name}*')
-        st.title("Expense Categorization App")
+        
         st.write(f'Your expense.csv should have column names Date, Description, Debit and Credit. "Amount" Column can be used if Debit and Credit columns are not available')
         st.image("expense_example.png", use_column_width=True)
         
