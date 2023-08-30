@@ -49,7 +49,7 @@ right: 2rem;
 """
 
 st.markdown(page_bg_img, unsafe_allow_html=True)
-st.title("Expense categorization app")
+st.write("### Expense categorization app")
 
 # with open('config.yaml') as file:
 #     config = yaml.load(file, Loader=SafeLoader)
