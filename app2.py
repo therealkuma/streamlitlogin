@@ -94,8 +94,6 @@ st.markdown(
 # Apply the custom background to the main container
 st.markdown('<div class="custom-background">', unsafe_allow_html=True)
 
-# Add content to your Streamlit app
-st.title("Expense Categorization App")
 
 if authentication_status:
     if username == 'guest':
