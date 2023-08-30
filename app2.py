@@ -165,7 +165,7 @@ if authentication_status:
 
                 # FAQ
                 st.write("## FAQ ")
-                st.write("if you have error message on first time login, refresh the page and login again would eliminate the error :O)")
+                st.write("if you have error message on first time login, refresh the page and login again would eliminate the error.")
 
             if expenses_file is not None and category_file is not None:
                 # Create temporary files
