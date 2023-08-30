@@ -15,15 +15,32 @@ import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 
+# with open('config.yaml') as file:
+#     config = yaml.load(file, Loader=SafeLoader)
+
+# authenticator = stauth.Authenticate(
+#     config['credentials'],
+#     config['cookie']['name'],
+#     config['cookie']['key'],
+#     config['cookie']['expiry_days'],
+#     config['preauthorized']
+# )
 # --- USER AUTHENTICATION ---
+
 users = jb.fetch_all_users()
 
 usernames = [user["key"] for user in users]
 names = [user["name"] for user in users]
 hashed_passwords = [user["password"] for user in users]
 
-authenticator = stauth.Authenticate(names, usernames, hashed_passwords,
-    "sales_dashboard", "abcdef", cookie_expiry_days=30)
+# Create a JSON format dictionary from the arrays
+credentials = {
+    username: {"name": name, "password": password}
+    for username, name, password in zip(usernames, names, hashed_passwords)
+}
+
+authenticator = stauth.Authenticate(credentials,
+     "sales_dashboard", "abcdef", cookie_expiry_days=30)
 
 
 name, authentication_status, username = authenticator.login('Login', 'main')
