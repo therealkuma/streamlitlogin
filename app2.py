@@ -49,17 +49,8 @@ users = fetch_users_with_retry()
 
 
 # Use the st.cache decorator to cache the result of jb.fetch_all_users()
-@st.cache
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-image: url('background.png');
-        background-size: cover;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True)
+# @st.cache
+
 
 # def fetch_users():
 #     return jb.fetch_all_users()
@@ -84,6 +75,22 @@ authenticator = stauth.Authenticate(credentials,
 
 
 name, authentication_status, username = authenticator.login('Login', 'main')
+
+# Add custom CSS for background image
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url('background.png');
+        background-size: cover;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Add content to your Streamlit app
+st.title("Expense Categorization App")
 
 if authentication_status:
     if username == 'guest':
