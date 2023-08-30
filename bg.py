@@ -49,7 +49,7 @@ right: 2rem;
 """
 
 st.markdown(page_bg_img, unsafe_allow_html=True)
-st.write("### Expense categorization app <span style='font-size: 20px;'>larger font size</span>")
+st.write("<span style='font-size: 20px;'>Expense categorization app</span>" ,unsafe_allow_html=True)
 
 # with open('config.yaml') as file:
 #     config = yaml.load(file, Loader=SafeLoader)
