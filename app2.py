@@ -76,25 +76,6 @@ authenticator = stauth.Authenticate(credentials,
 
 name, authentication_status, username = authenticator.login('Login', 'main')
 
-# Add an HTML component for styling
-st.markdown(
-    """
-    <style>
-    .custom-background {
-        background-image: url('background.png');
-        background-size: cover;
-        background-repeat: no-repeat;
-        min-height: 100vh; /* Ensure the background covers the entire viewport */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Apply the custom background to the main container
-st.markdown('<div class="custom-background">', unsafe_allow_html=True)
-
-
 if authentication_status:
     if username == 'guest':
         try:
