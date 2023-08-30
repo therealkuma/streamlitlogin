@@ -161,11 +161,11 @@ if authentication_status:
                 st.write("How to use this app")
                 
                 # Display the YouTube video
-                st.components.v1.html(youtube_embed_code, height=10)
+                st.components.v1.html(youtube_embed_code, height=200)
 
                 # FAQ
                 st.write("## FAQ ")
-                st.write("if you have error message on first time login, refresh the page and login again would eliminate the error")
+                st.write("if you have error message on first time login, refresh the page and login again would eliminate the error :O)")
 
             if expenses_file is not None and category_file is not None:
                 # Create temporary files
