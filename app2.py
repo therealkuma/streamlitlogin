@@ -14,6 +14,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
+import time
 
 # with open('config.yaml') as file:
 #     config = yaml.load(file, Loader=SafeLoader)
@@ -27,7 +28,24 @@ from yaml.loader import SafeLoader
 # )
 # --- USER AUTHENTICATION ---
 
-users = jb.fetch_all_users()
+def fetch_users_with_retry():
+    max_retries = 3
+    retry_delay = 2  # seconds
+    retries = 0
+    while retries < max_retries:
+        try:
+            users = jb.fetch_all_users()
+            return users
+        except Exception as e:
+            st.error(f"Error fetching users: {e}")
+            retries += 1
+            time.sleep(retry_delay)
+
+    st.error("Failed to fetch users after multiple retries.")
+    return []
+
+users = fetch_users_with_retry()
+
 
 # Use the st.cache decorator to cache the result of jb.fetch_all_users()
 # @st.cache
