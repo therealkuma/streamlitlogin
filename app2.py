@@ -242,7 +242,7 @@ if authentication_status:
                     st.plotly_chart(fig_bar)
                     
                     #### monthly total expense bar chart  ###
-                    categorized_df=categorized_df[~categorized_df['Description'].str.contains("AUTOPAY")]
+                    categorized_df=categorized_df[~categorized_df['Description'].str.contains("PAYMENT")]
                     total_monthly = categorized_df.groupby(categorized_df['Date'].dt.to_period('M'))['Amount'].sum()
                     
                     # Draw bar chart for month-to-month comparison
