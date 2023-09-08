@@ -242,7 +242,8 @@ if authentication_status:
                     st.plotly_chart(fig_bar)
                     
                     #### monthly total expense bar chart  ###
-                    categorized_df=categorized_df[~categorized_df['Description'].str.contains("PAYMENT|AUTOPAY", case=False, regex=True)]
+                    #categorized_df=categorized_df[~categorized_df['Description'].str.contains("PAYMENT|AUTOPAY", case=False, regex=True)]
+                    categorized_df = categorized_df[~categorized_df['Category'] == 'Card Payment']
                     total_monthly = categorized_df.groupby(categorized_df['Date'].dt.to_period('M'))['Amount'].sum()
                     
                     # Draw bar chart for month-to-month comparison
@@ -270,7 +271,8 @@ if authentication_status:
                 
                 #########SHOW TOTAL OF AMOUNT BY MONTH BUT EXCLUDE AUTOPAY CARD PAYMENT #################
                 # Filter out rows with Description containing "AUTOPAY"
-                filtered_categorized_df_no_autopay = filtered_categorized_df[~filtered_categorized_df['Description'].str.contains("PAYMENT|AUTOPAY", case=False, regex=True)]
+                # filtered_categorized_df_no_autopay = filtered_categorized_df[~filtered_categorized_df['Description'].str.contains("PAYMENT|AUTOPAY", case=False, regex=True)]
+                filtered_categorized_df_no_autopay = categorized_df[~categorized_df['Category'] == 'Card Payment']
                 
                 # Calculate the sum of the "Amount" column for the filtered DataFrame
                 total_amount_no_autopay = filtered_categorized_df_no_autopay["Amount"].sum()
