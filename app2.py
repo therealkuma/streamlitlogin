@@ -244,7 +244,7 @@ if authentication_status:
                     
                     #### monthly total expense bar chart  ###
                     # exclude "income" from category
-                    categorized_df=categorized_df[~categorized_df['Category'].str.contains("Income|income|INCOME", case=False, regex=True)]
+                    # categorized_df=categorized_df[~categorized_df['Category'].str.contains("Income|income|INCOME", case=False, regex=True)]
                     categorized_df=categorized_df[~categorized_df['Description'].str.contains("PAYMENT|AUTOPAY|DIRECTPAY", case=False, regex=True)]
                     #categorized_df = categorized_df[categorized_df['Category'].str.lower() != 'card payment']
                     total_monthly = categorized_df.groupby(categorized_df['Date'].dt.to_period('M'))['Amount'].sum()
