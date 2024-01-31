@@ -223,6 +223,8 @@ if authentication_status:
                 selected_category = st.selectbox("Select a category", categorized_df['Category'].unique(),index=2)
 
                 if selected_category:
+                    #exclude "income" from category
+                    category_df = categorized_df[~categorized_df['Category'] == "income"]
                     # Filter data for the selected category
                     category_df = categorized_df[categorized_df['Category'] == selected_category]
                     category_df['Date'] = pd.to_datetime(category_df['Date'])
