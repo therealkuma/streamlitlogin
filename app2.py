@@ -224,7 +224,7 @@ if authentication_status:
 
                 if selected_category:
                     # exclude "income" from category
-                    categorized_df=categorized_df[~categorized_df['Category'] == 'Income']
+                    categorized_df=categorized_df[~categorized_df['Category'].str.contains("Income|income|INCOME", case=False, regex=True)]
                     # Filter data for the selected category
                     category_df = categorized_df[categorized_df['Category'] == selected_category]
                     category_df['Date'] = pd.to_datetime(category_df['Date'])
